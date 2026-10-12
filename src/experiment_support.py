@@ -101,6 +101,7 @@ trả lời đủ các ý thiết yếu của question, dùng đúng phiên bả
 phủ định hoặc điều kiện quan trọng. label=0 khi sai, thiếu ý thiết yếu, dùng chính
 sách cũ, đảo phủ định hoặc thêm khẳng định không được reference hỗ trợ.
 Không trừ điểm chỉ vì diễn đạt khác, dài/ngắn khác hoặc không chép nguyên văn.
+Reasoning giải thích trong 1–2 câu theo tiêu chí.
 Trả JSON: {"label": 0 hoặc 1, "reasoning": "giải thích ngắn theo tiêu chí"}.
 """
 
@@ -111,7 +112,7 @@ def judge_binary(question, answer, reference, *, client=None):
         from openai import OpenAI
         client = OpenAI()
     response = client.chat.completions.create(
-        model=JUDGE_MODEL, temperature=0,
+        model=JUDGE_MODEL, temperature=0, max_tokens=256,
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": BINARY_SYSTEM_PROMPT},
