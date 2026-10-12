@@ -1,3 +1,8 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# ── PyTorch (CPU only) ────────────────────────────────────────────────────────
+torch
+
 # ── Day 18 dependencies (unchanged) ──────────────────────────────────────────
 pypdf>=4.0,<5
 python-dotenv>=1.0,<2
