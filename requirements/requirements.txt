@@ -1,0 +1,29 @@
+# ── Day 18 dependencies (unchanged) ──────────────────────────────────────────
+pypdf>=4.0,<5
+python-dotenv>=1.0,<2
+underthesea>=6.8,<9
+rank-bm25==0.2.2
+qdrant-client>=1.9,<1.10
+sentence-transformers>=3.0,<6
+flashrank>=0.2,<0.3
+ragas>=0.1.10,<0.2
+langchain-community>=0.2,<0.3
+langchain-openai>=0.1,<0.2
+datasets>=2.19,<3
+pyarrow>=15,<20                  # pyarrow>=20 requires NumPy 2; constraints pin NumPy 1.26.4
+openai>=1.30,<2
+numpy>=1.26,<2
+
+# ── Track 3B: LLM Judge ────────────────────────────────────────────────────
+scipy>=1.11,<2                   # Scientific dependencies; κ can be computed manually
+
+# ── Track 3B: Guardrails ───────────────────────────────────────────────────
+presidio-analyzer>=2.2,<3        # PII detection engine
+presidio-anonymizer>=2.2,<3      # PII anonymization
+spacy>=3.7,<3.9                  # Required by presidio-analyzer
+nemoguardrails[openai]==0.10.0    # Colang 1.0; tương thích LangChain 0.2 của RAGAS
+pytest>=8.0,<10                 # Offline tests; see requirements/requirements-test.txt
+jsonschema>=4.25,<5             # Submission checker: Draft 2020-12 report schemas
+
+# After pip install, run:
+#   python -m spacy download en_core_web_lg
