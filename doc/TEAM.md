@@ -17,7 +17,7 @@ Mỗi nhóm nộp một repo. Điền đủ thành viên và một mục INDIVID
 | STT | Họ và tên | MSSV | Vai trò / công việc thật | Bằng chứng |
 |---|---|---|---|---|
 | 1 | Mai Văn Trường | 2A202602983 | Tích hợp pipeline và chạy batch: port m1–m5 từ Day 18, sửa `m4_eval.evaluate_ragas`, cài môi trường, sinh 50 answers, viết Task 1–12 trong `phase_a_ragas.py`, `phase_b_judge.py`, `phase_c_guard.py`, sửa prompt guard, chạy Phase A/B/C live, soạn 3 báo cáo (có Claude Code hỗ trợ) | Commit `2de53da`, `0af6999` trên nhánh `integration`; `artifacts/*.json`; `doc/reports/*.md` |
-| 2 | Nguyễn Hoàng Anh | 2A202602811 | Phụ trách Phase A: review `phase_a_ragas.py` và m4, đối chiếu bottom 10 với answer/contexts, kiểm tra lại `failure_clusters.md`; trưởng nhóm, duyệt PR và nộp link | Chưa có commit; cập nhật sau khi review và duyệt PR |
+| 2 | Nguyễn Hoàng Anh | 2A202602811 | Phụ trách Phase A: review `phase_a_ragas.py` và m4, đối chiếu bottom 10 với answer/contexts, kiểm tra lại `failure_clusters.md`; trưởng nhóm, audit PR và nộp link | Bằng chứng audit trong `doc/reports/failure_clusters.md`; log `scripts/check_lab.py --with-tests` (86 passed) |
 | 3 | Nguyễn Viết Đức | 2A202602732 | Phụ trách Phase B: review `phase_b_judge.py`, đọc 5 cặp A/B và 10 nhãn nhị phân, kiểm tra lại `bias_report.md` | Chưa có commit; cập nhật sau khi review |
 | 4 | Lục Tiến Đạt | 2A202602969 | Phụ trách Phase C: review `phase_c_guard.py` và `guardrails/config.yml`, đối chiếu lượt chạy guard trước/sau khi sửa prompt và latency, kiểm tra lại `blueprint.md` | Chưa có commit; cập nhật sau khi review |
 
@@ -68,16 +68,43 @@ thật trong Phase C live (input rail, output rail và đo latency).
 
 ### NguyenHoangAnh-2A202602811
 
-- Phần được giao và phần thực tế đã làm: phụ trách Phase A và là trưởng nhóm. Việc cần làm: review
-  `src/phase_a_ragas.py` và `src/m4_eval.py`, đối chiếu bottom 10 trong `artifacts/ragas_50q.json`
-  với answer/contexts, kiểm tra lại `doc/reports/failure_clusters.md`, duyệt PR `integration` vào
-  `main` và nộp link. Mục này là bản nháp do Mai Văn Trường soạn theo phân công; Nguyễn Hoàng Anh cần
-  xác nhận và sửa lại theo việc đã thực sự làm.
-- Bằng chứng: chưa có commit; bổ sung PR/commit review sau khi hoàn thành.
-- Cách kiểm tra: đối chiếu số liệu báo cáo Phase A với `ragas_50q.json`; chạy `python scripts/check_lab.py`.
-- Điều đã học: bản nháp, cần tự viết lại sau khi review Phase A.
-- Giới hạn/cách xử lý: bản nháp, cần tự viết lại.
-- Nguồn/AI hỗ trợ nếu có: bản nháp, cần tự khai.
+- Phần được giao và phần thực tế đã làm: phụ trách Phase A và là trưởng nhóm. Thao tác thực tế đã thực hiện:
+  (1) Đọc kiểm tra mã nguồn `src/phase_a_ragas.py` (logic phân nhóm 3 distributions, công thức avg_score và
+  tính ma trận cluster analysis) và `src/m4_eval.py` (khởi tạo evaluator, khai báo `metadata.evaluator_models`,
+  cơ chế retry khi gặp NaN); (2) Viết và chạy script Python nội bộ để đọc chi tiết 10 câu hỏi có avg_score
+  thấp nhất trong `artifacts/ragas_50q.json`, trực tiếp đối chiếu câu hỏi, câu trả lời và contexts của từng
+  câu với `artifacts/answers_50q.json`; (3) Đọc đối chiếu số liệu trong báo cáo `doc/reports/failure_clusters.md`
+  với JSON nguồn; (4) Chạy công cụ kiểm tra tự động `scripts/check_lab.py --with-tests` trong môi trường ảo
+  `.venv`; (5) Với vai trò trưởng nhóm: kiểm tra git diff và commit log của nhánh `integration`, phát hiện
+  commit `980b122` có thay đổi xóa 72 starter files để cảnh báo và ngăn chặn việc merge làm mất dữ liệu trên `main`.
+- Bằng chứng:
+  - Bảng quan sát thực tế từ 10 câu bottom: 4 câu có câu trả lời là "Không tìm thấy." (id 39, 44, 33, 50);
+    4 câu có câu trả lời số học khớp với reference nhưng nhận điểm faithfulness 0.00 hoặc 0.33 (id 24, 38,
+    31, 5); 1 câu chỉ trả lời một phần do context thiếu bảng lương (id 21); 1 câu trả lời ngắn gọn (id 7).
+  - Kết quả chạy kiểm thử tự động offline bằng `scripts/check_lab.py --with-tests`: công cụ báo cáo 86 passed,
+    0 failed checks.
+  - Phân định rõ vai trò người soạn thảo ban đầu và người review trong `doc/reports/failure_clusters.md`.
+  - Lịch sử git hiển thị commit `980b122` trên nhánh `integration` xóa 72 files so với `main`.
+- Cách kiểm tra: thực thi `.\.venv\Scripts\python.exe scripts/check_lab.py --with-tests` để kiểm tra toàn bộ
+  schemas và unit tests offline; dùng script Python đọc trực tiếp `artifacts/ragas_50q.json` để kiểm chứng
+  độc lập các số liệu.
+- Điều đã học:
+  - Phân biệt giữa quan sát thực tế và nhãn tự động: Trong 10 câu bottom, nhãn tự động từ cây quyết định là
+    "LLM hallucinating", nhưng đọc thực tế câu trả lời cho thấy không có hiện tượng bịa đặt thông tin; 4 câu
+    là từ chối trả lời ("Không tìm thấy.") và 4 câu là kết quả tính toán đúng với reference.
+  - Phân biệt quan sát và giả thuyết nguyên nhân: Quan sát thấy câu tính toán bị điểm faithfulness thấp vì
+    kết quả phép tính (như 50.000 VNĐ, 600 USD) không xuất hiện nguyên văn trong context. Với các câu từ chối,
+    giả thuyết đặt ra là câu lệnh prompt yêu cầu nghiêm ngặt ("Nếu không có → nói 'Không tìm thấy.'") có thể
+    khiến mô hình chọn phương án từ chối an toàn khi thông tin bị phân tán; đây là giả thuyết giải thích dựa
+    trên quan sát, cần thêm thực nghiệm kiểm chứng trước khi kết luận quan hệ nhân quả.
+  - Về vai trò quản lý mã nguồn: Cần kiểm tra kỹ git log và diff giữa các nhánh trước khi tích hợp để tránh
+    rủi ro nhánh cá nhân xóa nhầm file dùng chung của dự án.
+- Giới hạn/cách xử lý: Nhận định dựa trên 1 lượt chạy dữ liệu có sẵn trong artifacts do Mai Văn Trường thực
+  hiện trước đó; các giả thuyết về prompt và metric chưa được kiểm chứng bằng thực nghiệm can thiệp có đối
+  chứng (ablation study) vì tuân thủ quy tắc không gọi API live tốn phí trong giai đoạn review.
+- Nguồn/AI hỗ trợ nếu có: Sử dụng Antigravity Coding Assistant (Gemini 3.6 Flash) để hỗ trợ viết script
+  kiểm tra số liệu JSON offline và soát lỗi cú pháp; toàn bộ thao tác đối chiếu dữ liệu và đánh giá đều được
+  thực hiện trực tiếp trên file nguồn.
 
 ### NguyenVietDuc-2A202602732
 
