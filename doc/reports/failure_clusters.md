@@ -2,7 +2,8 @@
 
 Nhóm: FourPeoples
 
-Người phụ trách: Mai Văn Trường – 2A202602983 (soạn báo cáo với hỗ trợ của Claude Code, số liệu đối chiếu trực tiếp từ JSON)
+Người soạn bản thảo ban đầu: Mai Văn Trường – 2A202602983 (soạn báo cáo với hỗ trợ của Claude Code khi chạy batch, số liệu trích xuất từ JSON)
+Người review & xác minh Phase A: Nguyễn Hoàng Anh – 2A202602811 (đối chiếu 10 câu bottom với answer/contexts thực tế, kiểm tra tính nhất quán giữa code, artifacts và báo cáo)
 
 Nguồn: `artifacts/ragas_50q.json`; run timestamp: 2026-10-12T12:38:14+00:00.
 Generation mode/fallback và điều kiện chạy: cả 50 answers có `generation_mode = llm`. Lượt
@@ -57,16 +58,18 @@ với phần lớn các câu này. Có ba kiểu lỗi thật:
    Cả bốn trả lời đúng một câu "Không tìm thấy." trong khi contexts có thông tin cần thiết:
    context đầu của id 39 là chính sách mật khẩu v1.0, của id 33 là chính sách nghỉ phép v2024,
    của id 50 là quy định sử dụng VPN. RAGAS chấm câu từ chối faithfulness = 0 và
-   answer_relevancy = 0 (không có khẳng định nào để kiểm, không trả lời câu hỏi). Nguyên nhân là
-   system prompt "Trả lời CHỈ dựa trên context. Nếu không có → nói 'Không tìm thấy.'" quá cứng:
-   khi câu hỏi cần ghép hai tài liệu hoặc context chỉ chứa một nửa thông tin, model chọn từ chối.
+   answer_relevancy = 0 (không có khẳng định nào để kiểm, không trả lời câu hỏi). Giả thuyết
+   nguyên nhân: quy định trong system prompt "Trả lời CHỈ dựa trên context. Nếu không có → nói
+   'Không tìm thấy.'" có thể quá khắt khe, khiến mô hình có xu hướng chọn từ chối an toàn khi
+   câu hỏi cần ghép hai tài liệu hoặc context chỉ chứa một phần thông tin.
    Đây là 4/50 câu nhưng chiếm cả 4 vị trí cuối bảng.
 2. **Suy luận/tính toán đúng nhưng bị chấm không faithful** — id 24, 38, 31, 5. Answer id 24 tính
    phí phạt 2% × 15.000.000 × 5/30 = 50.000 VNĐ, khớp reference; id 38 ra 600 USD, id 31 ra
    2.400.000 VNĐ, id 5 trả lời đúng "Tổng Giám đốc (CEO)". RAGAS faithfulness tách answer thành
    các khẳng định và đòi mỗi khẳng định được context nêu trực tiếp; kết quả phép tính
-   ("bị phạt 50.000 đồng") không có nguyên văn trong context nên bị chấm 0. Đây là giới hạn của
-   metric với câu multi_hop cần tính toán, không phải pipeline bịa thông tin.
+   ("bị phạt 50.000 đồng") không có nguyên văn trong context nên bị chấm 0. Quan sát này phản ánh
+   đặc điểm cố hữu trong cơ chế trích xuất khẳng định của metric RAGAS đối với câu cần tính toán,
+   không phải do pipeline tự bịa đặt thông tin ngoài tài liệu.
 3. **Trả lời thiếu một nửa câu hỏi** — id 21: đúng 18 ngày phép nhưng nói không tìm thấy lương
    Senior (20–35 triệu); context_recall = 0 cho thấy chunk bảng lương không vào top-3. Đây là lỗi
    retrieval cho câu hỏi hai ý. Id 7 đúng (CEO phê duyệt) nhưng thiếu lưu ý tự đóng bảo hiểm.
