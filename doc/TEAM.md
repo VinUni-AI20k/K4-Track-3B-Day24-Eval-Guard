@@ -19,7 +19,7 @@ Mỗi nhóm nộp một repo. Điền đủ thành viên và một mục INDIVID
 | 1 | Mai Văn Trường | 2A202602983 | Tích hợp pipeline và chạy batch: port m1–m5 từ Day 18, sửa `m4_eval.evaluate_ragas`, cài môi trường, sinh 50 answers, viết Task 1–12 trong `phase_a_ragas.py`, `phase_b_judge.py`, `phase_c_guard.py`, sửa prompt guard, chạy Phase A/B/C live, soạn 3 báo cáo (có Claude Code hỗ trợ) | Commit `2de53da`, `0af6999` trên nhánh `integration`; `artifacts/*.json`; `doc/reports/*.md` |
 | 2 | Nguyễn Hoàng Anh | 2A202602811 | Phụ trách Phase A: review `phase_a_ragas.py` và m4, đối chiếu bottom 10 với answer/contexts, kiểm tra lại `failure_clusters.md`; trưởng nhóm, duyệt PR và nộp link | Chưa có commit; cập nhật sau khi review và duyệt PR |
 | 3 | Nguyễn Viết Đức | 2A202602732 | Phụ trách Phase B: review `phase_b_judge.py`, đọc 5 cặp A/B và 10 nhãn nhị phân, kiểm tra lại `bias_report.md` | Chưa có commit; cập nhật sau khi review |
-| 4 | Lục Tiến Đạt | ChuaCoMSSV | Phụ trách Phase C: review `phase_c_guard.py` và `guardrails/config.yml`, đối chiếu lượt chạy guard trước/sau khi sửa prompt và latency, kiểm tra lại `blueprint.md` | Chưa có commit; cập nhật sau khi review |
+| 4 | Lục Tiến Đạt | 2A202602969 | Phụ trách Phase C: review `phase_c_guard.py` và `guardrails/config.yml`, đối chiếu lượt chạy guard trước/sau khi sửa prompt và latency, kiểm tra lại `blueprint.md` | Chưa có commit; cập nhật sau khi review |
 
 Người tích hợp/chạy batch/nộp link: Mai Văn Trường tích hợp pipeline, chạy setup và ba batch live,
 push nhánh `integration` (commit `2de53da` code + artifacts, `0af6999` báo cáo); Nguyễn Hoàng Anh
@@ -91,13 +91,12 @@ thật trong Phase C live (input rail, output rail và đo latency).
 - Giới hạn/cách xử lý: bản nháp, cần tự viết lại.
 - Nguồn/AI hỗ trợ nếu có: bản nháp, cần tự khai.
 
-### LucTienDat-ChuaCoMSSV
+### LucTienDat-2A202602969
 
 - Phần được giao và phần thực tế đã làm: phụ trách Phase C. Việc cần làm: review
   `src/phase_c_guard.py` và `guardrails/config.yml`, đọc kết quả attacks/clean/output và latency trong
   `artifacts/guard_results.json`, kiểm tra lại `doc/reports/blueprint.md`. Mục này là bản nháp do Mai
-  Văn Trường soạn theo phân công; Lục Tiến Đạt cần xác nhận, sửa lại và thay `ChuaCoMSSV` bằng MSSV
-  thật (cả trong bảng thành viên).
+  Văn Trường soạn theo phân công; Lục Tiến Đạt cần xác nhận và sửa lại theo việc đã thực sự làm.
 - Bằng chứng: chưa có commit; bổ sung PR/commit review sau khi hoàn thành.
 - Cách kiểm tra: đối chiếu percentile latency với raw samples; chạy `python -m pytest tests/test_phase_c.py`.
 - Điều đã học: bản nháp, cần tự viết lại sau khi review Phase C.
